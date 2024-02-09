@@ -1,0 +1,85 @@
+ a single document in a collection (including all embedded documents it might have) must be <= 16mb. Additionally, you may only have 100 levels of embedded documents.
+
+
+
+ contactData> db.hobbies.insertMany([{_id : "yoga" , name : "yoga"} , {_id : "cook" , name : "cook" } , {_id : "hike" , name : "hike"}], {ordered:false})
+Uncaught:
+MongoBulkWriteError: E11000 duplicate key error collection: contactData.hobbies index: _id_ dup key: { _id: "yoga" }
+Result: BulkWriteResult {
+  insertedCount: 1,
+  matchedCount: 0,
+  modifiedCount: 0,
+  deletedCount: 0,
+  upsertedCount: 0,
+  upsertedIds: {},
+  insertedIds: { '2': 'hike' }
+}
+Write Errors: [
+  WriteError {
+    err: {
+      index: 0,
+      code: 11000,
+      errmsg: 'E11000 duplicate key error collection: contactData.hobbies index: _id_ dup key: { _id: "yoga" }',
+      errInfo: undefined,
+      op: { _id: 'yoga', name: 'yoga' }
+    }
+  },
+  WriteError {
+    err: {
+      index: 1,
+      code: 11000,
+      errmsg: 'E11000 duplicate key error collection: contactData.hobbies index: _id_ dup key: { _id: "cook" }',
+      errInfo: undefined,
+      op: { _id: 'cook', name: 'cook' }
+    }
+  }
+]
+contactData> db.hobbies.find().pretty()
+[
+  { _id: 'dance', name: 'dance' },
+  { _id: 'cook', name: 'cook' },
+  { _id: 'hiking', name: 'hiking' },
+  { _id: 'yoga', name: 'yoga' },
+  { _id: 'hike', name: 'hike' }
+]
+contactData> db.persons.insertOne({name : "sam" , age:24} , {writeConcern : { w: 1}})
+{
+  acknowledged: true,,
+  insertedId: ObjectId('65b8c520684031869882b09e')
+}
+contactData> db.persons.insertOne({name : "sammy" , age:24} , {writeConcern : { w: 1, j: false}})
+{
+  acknowledged: true,
+  insertedId: ObjectId('65b8c5c9684031869882b09f')
+}
+contactData> db.persons.insertOne({name : "sammy" , age:24} , {writeConcern : { w: 1, j: true}})
+{
+  acknowledged: true,
+  insertedId: ObjectId('65b8c5d5684031869882b0a0')
+}
+contactData> db.persons.insertOne({name : "sammy" , age:24} , {writeConcern : { w: 1, j: true, wtimeout : 200}})
+{
+  acknowledged: true,
+  insertedId: ObjectId('65b8c5fd684031869882b0a1')
+}
+contactData> db.persons.insertOne({name : "ammyy" , age:24} , {writeConcern : { w: 1, j: true, wtimeout : 1}})
+{
+  acknowledged: true,
+  insertedId: ObjectId('65b8c61a684031869882b0a2')
+}
+contactData> db.persons.insertOne({name : "ammyy" , age:24} , {writeConcern : { w: 0, j: true, wtimeout : 1}})
+{
+  acknowledged: false,
+  insertedId: ObjectId('65b8c658684031869882b0a3')
+}
+contactData> db.persons.find()
+
+
+writeConcern: This is an option that allows you to specify the level of acknowledgment you want from the MongoDB server.
+
+w: 0: The w parameter determines the number of nodes that must acknowledge the write operation before it is considered successful. Setting it to 0 means that the write operation is considered successful as soon as it's handed off to the server, without waiting for any acknowledgment. It's a fast but less durable option, as the data might not be written to a majority of nodes.
+
+j: true: The j parameter, also known as the "journal write concern," specifies whether to wait for the write to be recorded in the journal. Setting it to true ensures that the write is durable and won't be lost even if the server crashes. This provides more durability but may introduce some latency.
+
+wtimeout: 1: This parameter sets a timeout for the acknowledgment. In this case, it's set to 1 millisecond, meaning that if the acknowledgment is not received within 1 millisecond, the operation will time out.
+

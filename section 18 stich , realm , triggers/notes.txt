@@ -1,0 +1,117 @@
+mongodb stitch
+
+It's a serverless platform for building applications you could say, it's a collection of services offered
+
+by the mongodb company that you can use when building an app
+
+and with app, I mean basically a web app or a mobile app or also a desktop app, so that you get to focus
+
+on your user interface and your core logic even the logic which should run on a server,
+
+so on a backend but you don't have to write the entire boilerplate for setting up the server, for managing the
+
+server or for example for creating a restful API on your own, that is all handled by stitch. 
+
+
+
+mongodb triggers
+
+
+Atlas Triggers execute application and database logic. Triggers can respond to events or use pre-defined schedules.
+
+Triggers listen for events of a configured type. Each Trigger links to a specific Atlas Function. When a Trigger observes an event that matches your configuration, it "fires". 
+A Trigger might fire on:
+
+A specific operation type in a given Collection.
+An authentication event, such as user creation or deletion.
+A scheduled time.
+
+
+
+database trigger
+
+trigger types  database trigger and schedule trigger
+1:39
+database trigger basically means anytime
+something that you want to happen
+to your collection it's going to
+set off this trigger for example
+1:50
+the user document was inserted into your
+1:53
+collection or someone deleted something
+1:55
+from a collection that you're looking at
+1:57
+every time something specific happens
+1:59
+that you want to be notified about you
+2:01
+can set up a database trigger for it
+
+
+scheduled triggers
+
+it's going to be running periodically
+7:48
+off of the condition that you set so no
+7:51
+matter what if anything gets inserted or
+7:53
+deleted it's going to run on a
+7:55
+continuous period that you can set and
+7:57
+this may be useful because let's say you
+8:00
+know every day at midnight you want to
+8:02
+run a scheduled trigger that gives you
+8:04
+information about the database
+
+
+mongodb realm
+
+mongodb realm is a
+1:40
+serverless platform that makes it easy
+1:43
+to bring your data
+1:44
+into the front end of your application
+1:46
+without having to worry about
+1:47
+hosting your own backend server the
+1:50
+mongodb realm
+1:51
+backend as a service platform provides
+1:53
+functions
+1:54
+you can execute serverless javascript
+1:56
+functions to perform database operations
+1:59
+and build out apis for your application
+2:02
+user authentication
+2:03
+you can use realms built-in
+2:05
+authentication providers or
+2:06
+integrate an existing provider and allow
+2:09
+realm to manage user authentication
+
+
+
+
+
+
+
+
+

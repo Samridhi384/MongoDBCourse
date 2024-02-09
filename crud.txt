@@ -1,0 +1,408 @@
+for mongoimport 
+mongoimport "C:\Users\SamridhiAhuja\Desktop\Internship\MongoDB\01-flights.json" -d college -c flights --jsonArray --drop
+
+mongoimport "C:\Users\SamridhiAhuja\Desktop\Internship\MongoDB\boxOffice-extended.json" -d boxOffice -c exmoviestarts --jsonArray --drop
+
+
+
+
+
+create dbs
+
+show dbs
+use flights (new database)
+
+db.flightData.insertOne({
+    "departureAirport": "MUC",
+    "arrivalAirport": "SFO",
+    "aircraft": "Airbus A380",
+    "distance": 12000,
+    "intercontinental": true
+})
+
+db.flightData.find().pretty()
+
+db.flightData.insertOne({departureAirport: "TXL" , arrivalAirport: "LHR"})
+
+db.flightData.insertOne({departureAirport: "TXL" , arrivalAirport: "LHR" ,_id : "txl_lhr_1"}) 
+
+//compulsory use _id and not just id or anything else
+we can not use the same id again 
+
+db.flightData.deleteOne({departureAirport: "TXL"})
+db.flightData.find().pretty()
+
+db.flightData.insertMany([
+  {
+    "departureAirport": "MUC",
+    "arrivalAirport": "SFO",
+    "aircraft": "Airbus A380",
+    "distance": 12000,
+    "intercontinental": true
+  },
+  {
+    "departureAirport": "LHR",
+    "arrivalAirport": "TXL",
+    "aircraft": "Airbus A320",
+    "distance": 950,
+    "intercontinental": false
+  }
+]
+)
+
+findOne() does not work with pretty() as it only gives 1 document and the cursor
+
+Update take this object and basically replace the existing object with this new object, with this new document, it will only keep the ID, it will only patch the existing object instead of replace it, like updateOne and many do it but it is depreceated so we can use replaceOne to replace the object and for partial changes updateOne or many is there.
+
+
+//projections
+db.passengers.findOne({name : "Albert Twostone"}).hobbies
+
+db.passengers.find({hobbies : "dance"}).pretty()
+
+db.flightData.find({"status.description" : "on time"}).pretty()
+// here "status.description" if " " not used then it will give error
+
+//challenge 
+
+use hospital 
+
+db.patient.insertMany([
+    {
+        firstName : "sam",
+        lastName : "Verma",
+        age : 17,
+        history : [
+            {"disease" : "cold" , "treatment" : 4},
+            {"disease" : "flu" , "treatment" : 5}
+        ]
+    },
+    {
+        firstname: "Emily",
+        lastname: "Cooper",
+        age: 24,
+        history: [
+            { 
+                "disease": "Cough & Cold",
+                "treatment": 6
+            }
+        ]
+    },
+     {
+        firstName : "neha",
+        lastName : "Verma",
+        age : 20,
+        history : [
+            {"disease" : "cold" , "treatment" : 4},
+        ]
+    }
+])
+
+db.numbers.insertOne({a:NumberInt(1)}) will take less space compare to a :1
+
+db.stats() is used to measure the size used
+
+typeof db.numbers.findOne().a 
+
+
+
+    status: {
+      description: 'on time',
+      last_updated: '1 hour ago',
+      details: { responsible: true }
+    }
+  }
+]
+flights> db.flightData.find({status.description : "on time"}).pretty()
+Uncaught:
+SyntaxError: Unexpected token, expected "," (1:26)
+
+> 1 | db.flightData.find({status.description : "on time"}).pretty()
+    |                           ^
+  2 |
+
+flights> db.flightData.find({"status.details.responsible" : true}).pretty()
+[
+  {
+    _id: ObjectId('65b781ea27b8a830953259c3'),
+    departureAirport: 'MUC',
+    arrivalAirport: 'SFO',
+    aircraft: 'Airbus A380',
+    distance: 12000,
+    intercontinental: true,
+    status: {
+      description: 'on time',
+      last_updated: '1 hour ago',
+      details: { responsible: true }
+    }
+  },
+  {
+
+hospital> db.patient.insertMany([
+...     {
+...         firstName : "sam",
+...         lastName : "Verma",
+...         age : 17,
+...         history : [
+...             {"disease" : "cold" , "treatment" : 4},
+...             {"disease" : "flu" , "treatment" : 5}
+...         ]
+...     },
+...     {
+...         firstname: "Emily",
+...         lastname: "Cooper",
+...         age: 24,
+...         history: [
+...             {
+...                 "disease": "Cough & Cold",
+...                 "treatment": 6
+...             }
+...         ]
+...     },
+...      {
+...         firstName : "neha",
+...         lastName : "Verma",
+...         age : 20,
+...         history : [
+...             {"disease" : "cold" , "treatment" : 4},
+...         ]
+...     }
+... ])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('65b787fd27b8a830953259c5'),
+    '1': ObjectId('65b787fd27b8a830953259c6'),
+    '2': ObjectId('65b787fd27b8a830953259c7')
+  }
+}witched to db hospital
+hospital> db.patient.updateOne({age : 20} , {$set : {lastName : "Sharma" , history : {disease : "malaria" , treatment : 7}}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+hospital> db.patient.find().pretty()
+[
+  {
+    _id: ObjectId('65b787fd27b8a830953259c5'),
+    firstName: 'sam',
+    lastName: 'Verma',
+    age: 17,
+    history: [
+      { disease: 'cold', treatment: 4 },
+      { disease: 'flu', treatment: 5 }
+    ]
+  },
+  {
+    _id: ObjectId('65b787fd27b8a830953259c6'),
+    firstname: 'Emily',
+    lastname: 'Cooper',
+    age: 24,
+    history: [ { disease: 'Cough & Cold', treatment: 6 } ]
+  },
+  {
+    _id: ObjectId('65b787fd27b8a830953259c7'),
+    firstName: 'neha',
+    lastName: 'Sharma',
+    age: 20,
+    history: { disease: 'malaria', treatment: 7 }
+  }
+]
+hospital> db.patient.updateOne({age : 20} , {$set : {history : {disease : "cold" , treatment : 5}}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+hospital> db.patient.find().pretty()
+[
+  {
+    _id: ObjectId('65b787fd27b8a830953259c5'),
+    firstName: 'sam',
+    lastName: 'Verma',
+    age: 17,
+    history: [
+      { disease: 'cold', treatment: 4 },
+      { disease: 'flu', treatment: 5 }
+    ]
+  },
+  {
+    _id: ObjectId('65b787fd27b8a830953259c6'),
+    firstname: 'Emily',
+    lastname: 'Cooper',
+    age: 24,
+    history: [ { disease: 'Cough & Cold', treatment: 6 } ]
+  },
+  {
+    _id: ObjectId('65b787fd27b8a830953259c7'),
+    firstName: 'neha',
+    lastName: 'Sharma',
+    age: 20,
+    history: { disease: 'cold', treatment: 5 }
+  }
+]
+hospital> db.patient.updateOne({age : 20} , {$set : {history :[ {disease : "malaria" , treatment : 5}]}} )
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+hospital> db.patient.find().pretty()
+[
+  {
+    _id: ObjectId('65b787fd27b8a830953259c5'),
+    firstName: 'sam',
+    lastName: 'Verma',
+    age: 17,
+    history: [
+      { disease: 'cold', treatment: 4 },
+      { disease: 'flu', treatment: 5 }
+    ]
+  },
+  {
+    _id: ObjectId('65b787fd27b8a830953259c6'),
+    firstname: 'Emily',
+    lastname: 'Cooper',
+    age: 24,
+    history: [ { disease: 'Cough & Cold', treatment: 6 } ]
+  },
+  {
+    _id: ObjectId('65b787fd27b8a830953259c7'),
+    firstName: 'neha',
+    lastName: 'Sharma',
+    age: 20,
+    history: [ { disease: 'malaria', treatment: 5 } ]
+  }
+]
+hospital> db.patient.find({age : {$gt : 18 }}).pretty()
+[
+  {
+    _id: ObjectId('65b787fd27b8a830953259c6'),
+    firstname: 'Emily',
+    lastname: 'Cooper',
+    age: 24,
+    history: [ { disease: 'Cough & Cold', treatment: 6 } ]
+  },
+  {
+    _id: ObjectId('65b787fd27b8a830953259c7'),
+    firstName: 'neha',
+    lastName: 'Sharma',
+    age: 20,
+    history: [ { disease: 'malaria', treatment: 5 } ]
+  }
+]
+hospital> db.patient.deleteMany({"history.disease" : "cold" })
+{ acknowledged: true, deletedCount: 1 }
+hospital> use shop
+switched to db shop
+shop> db.products.insertOne({name : "a book" , price : 12.99})
+{
+  acknowledged: true,
+  insertedId: ObjectId('65b78e8b27b8a830953259c8')
+}
+shop> db.products.insertOne({title : "t-shirt" , seller :{name : "sam" , age : 12})
+Uncaught:
+SyntaxError: Unexpected token, expected "," (1:76)
+
+> 1 | db.products.insertOne({title : "t-shirt" , seller :{name : "sam" , age : 12})
+    |                                                                             ^
+  2 |
+
+shop> db.products.insertOne({title : "t-shirt" , seller :{name : "sam" , age : 12}})
+{
+  acknowledged: true,
+  insertedId: ObjectId('65b78ed427b8a830953259c9')
+}
+shop> db.products.find().pretty()
+[
+  {
+    _id: ObjectId('65b78e8b27b8a830953259c8'),
+    name: 'a book',
+    price: 12.99
+  },
+  {
+    _id: ObjectId('65b78ed427b8a830953259c9'),
+    title: 't-shirt',
+    seller: { name: 'sam', age: 12 }
+  }
+]
+shop> db.products.insertOne({name : "kite" , price : 12})
+{
+  acknowledged: true,
+  insertedId: ObjectId('65b792a227b8a830953259ca')
+}
+shop> db.products.insertOne({name : "shirt" , price : 78 , size: "l"})
+{
+  acknowledged: true,
+  insertedId: ObjectId('65b792c227b8a830953259cb')
+}
+shop> db.products.find().pretty()
+[
+  {
+    _id: ObjectId('65b78e8b27b8a830953259c8'),
+    name: 'a book',
+
+shop> db.companies.insertOne({name : "farm frenzy" , isStartup : true , employee : 22 , funding : 1234567995858 , details : {ceo : "}})
+Uncaught:
+SyntaxError: Unterminated string constant. (1:125)
+
+> 1 | db.companies.insertOne({name : "farm frenzy" , isStartup : true , employee : 22 , funding : 1234567995858 , details : {ceo : "}})
+    |                                                                                                                              ^
+  2 |
+
+shop> db.companies.insertOne({name : "farm frenzy" , isStartup : true , employee : 22 , funding : 1234567995858 , details : {ceo : "mark super"} , tags : [{title : "super"} , {title :"perfect"}], foundingDate : new Date(), insertedAt: new Timestamp()})
+{
+  acknowledged: true,
+  insertedId: ObjectId('65b7963527b8a830953259cc')
+}
+shop> db.companies.findOne()
+{
+  _id: ObjectId('65b7963527b8a830953259cc'),
+  name: 'farm frenzy',
+  isStartup: true,
+  employee: 22,
+  funding: 1234567995858,
+  details: { ceo: 'mark super' },
+  tags: [ { title: 'super' }, { title: 'perfect' } ],
+  foundingDate: ISODate('2024-01-29T12:12:37.541Z'),
+  insertedAt: Timestamp({ t: 1706530357, i: 1 })
+}
+shop> db.stats
+[Function: stats] AsyncFunction {
+  apiVersions: [ 0, 0 ],
+  returnsPromise: true,
+  serverVersions: [ '0.0.0', '999.999.999' ],
+  topologies: [ 'ReplSet', 'Sharded', 'LoadBalanced', 'Standalone' ],
+  returnType: { type: 'unknown', attributes: {} },
+  deprecated: false,
+  platforms: [ 'Compass', 'Browser', 'CLI' ],
+  isDirectShellCommand: false,
+  acceptsRawInput: false,
+  shellCommandCompleter: undefined,
+  help: [Function (anonymous)] Help
+}
+shop> db.stats()
+{
+  db: 'shop',
+  collections: Long('2'),
+  views: Long('0'),
+  objects: Long('5'),
+  avgObjSize: 93.2,
+  dataSize: 466,
+  storageSize: 57344,
+  indexes: Long('2'),
+  indexSize: 57344,
+  totalSize: 114688,
+  scaleFactor: Long('1'),
+  fsUsedSize: 65126940672,
+  fsTotalSize: 109453877248,
+  ok: 1
+}
+shop>

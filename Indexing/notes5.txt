@@ -1,0 +1,36 @@
+collscan vs ixscan
+
+a search for COLLSCANS will show queries that need attention.
+collection scan simply means that mongodb to fulfill this query will go through the entire collection,
+
+index scan to fulfill this query, which means it sees that for seller, such an index exists and it therefore simply goes to that seller index and can quickly jump to the right values
+
+
+The important thing is that the index items are ordered (ascending or descending - depending on how you created the index). createIndex({age: 1}) creates an index with ascending sorting, createIndex({age: -1}) creates one with descending sorting
+
+a compound index simply is an index with more than one field, like here we got two fields and this will essentially store one index where each entry in the index is now not on a single value but two combined values. So it does not create two indexes, that's important, it creates one index but one index where every element is a well, connected value. So now it will simply create pairs of ages and genders.
+
+
+//compound index
+if you had a compound index with three or four elements, you can have up to 31, then you could also just use the first two, the first three or all four or just the first but you can't use the fourth one or the third one. These are some restrictions you have on compound indexes but compound indexes in general allow you to speed up queries that use multiple values if you create a compound index on these multiple values.
+
+//index for sorting
+Now this is another cool feature of indexes, since we have an ordered list of values already, mongodb can utilize that to quickly give us back the order of documents we need. Now also important to understand or to know here is that if you are not using indexes and you do a sort on a large amount of documents, you can actually timeout because mongodb has a threshold of 32 megabytes in memory for sorting and if you have no index, mongodb will essentially fetch all your documents into memory and do the sort there and for large collections and large amounts of fetched documents, this can simply be too much to then sort. So sometimes, you also need an index not just to speed up the query which always makes sense but also to be able to sort at all.
+
+the unique index is a great way for you to not just speed up your find queries but also to guarantee that you have unique values for that given field in that collection.
+
+Whenever mongodb has the impression that your find request would yield more than what's in your index, it will not use that index but if you typically run queries where you are within your index, your filtered or your partial index, well then mongodb will take advantage of it and then you benefit from having a smaller index and having less impact with writes.
+
+Time-To-Live (TTL) Index used with seld destroying data for example to delete any session data
+
+covered query
+A covered query is a query that can be satisfied entirely using an index and does not have to examine any documents. 
+
+multikey indexing
+MongoDB allows to index a field that holds an array value by creating an index key for each element in the array, such type of indexing is called Multikey indexes.
+
+db.products.find({$text : {$search : "\"awesome book\""}}).pretty()
+
+
+So we could have title 1, description 10 and now description would be worth 10 times as much as title or would weigh in 10 times as much.
+
